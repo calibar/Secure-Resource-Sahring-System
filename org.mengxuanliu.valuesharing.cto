@@ -1,0 +1,94 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * valuesharing business network definition.
+ */
+namespace org.mengxuanliu.valuesharing
+
+concept viewer{
+	--> UserParticipant viewer
+    /*o Integer counter*/
+}
+concept ResourceAccess {
+  o String Name
+  o String Url
+  o String AuthenticationToken
+}
+asset Resource identified by ResourceId {
+  o String ResourceId
+  --> UserParticipant owner
+  o ResourceAccess[] ResourceAccess
+  o viewer[] viewer
+}
+
+participant UserParticipant identified by participantId {
+  o String participantId
+  o String Name
+  o String Password
+}
+
+transaction ChangeOwner{
+  --> Resource Resource
+  --> UserParticipant newOwner
+}
+
+event ChangeOwnerEvent{
+  --> Resource Resource
+  --> UserParticipant oldOwner
+  --> UserParticipant newOwner
+}
+
+transaction ViewerReadResource{
+  --> Resource Resource
+}
+
+event ViewerReadResourceEvent{
+  --> UserParticipant ResourceViewer
+    --> Resource Resource
+}
+
+transaction OwnerAddViewer {
+  --> Resource Resource
+  o viewer[] viewers
+}
+
+transaction OwnerDeleteViewer {
+  --> Resource Resource
+  o viewer[] viewers
+}
+
+transaction OwnerAddResourceAccess{
+  --> Resource Resource
+  o ResourceAccess[] ResourceAccess
+}
+
+transaction OwnerDeleteMultiResourceAccessByName{
+  --> Resource Resource
+  o String[] ResourceAccessName
+}
+
+transaction OwnerUpdateResourceAccess{
+  --> Resource Resource
+  o ResourceAccess[] ResourceAccess
+}
+
+transaction Verification {
+  o String InputUsername
+  o String InputPassword
+}
+/*transaction UserChangeTheirInfo {
+  o String newName
+  o String newPassword
+}*/
